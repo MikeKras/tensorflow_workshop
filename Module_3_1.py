@@ -34,17 +34,17 @@ def forwardprop(X, w_1):
     """
     Forward-propagation.
     """
-    yhat = tf.nn.sigmoid(tf.matmul(X, w_1))  # The \sigma function
+    yhat = tf.matmul(X, w_1)  # The \sigma function
     return yhat
 
 def get_iris_data():
     """ Read the iris data set and split them into training and test sets """
-    iris   = datasets.load_iris()
-    data   = iris["data"]
+    iris = datasets.load_iris()
+    data = iris["data"]
     target = iris["target"]
 
     # Prepend the column of 1s for bias
-    N, M  = data.shape
+    N, M = data.shape
     all_X = np.ones((N, M + 1))
     all_X[:, 1:] = data
 
@@ -68,11 +68,10 @@ def train_regression():
     w_1 = init_weights((x_size, y_size))
 
     # Forward propagation
-    yhat    = forwardprop(X, w_1)
+    yhat = forwardprop(X, w_1)
     predict = tf.argmax(yhat, axis=1)
-
     # Backward propagation
-    cost    = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
     updates = tf.train.GradientDescentOptimizer(0.001).minimize(cost)
 
     # Run SGD
@@ -80,7 +79,7 @@ def train_regression():
     init = tf.global_variables_initializer()
     sess.run(init)
 
-    for epoch in range(15):
+    for epoch in range(150):
         # Train with each example
         for i in range(len(train_X)):
             sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})

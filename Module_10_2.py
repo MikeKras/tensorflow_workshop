@@ -3,6 +3,9 @@
 Retraining (Finetuning) Example with vgg.tflearn. Using weights from VGG model to retrain
 network for a new task (your own dataset).All weights are restored except
 last layer (softmax) that will be retrained to match the new task (finetuning).
+
+Using pretrained model for further training with other inputs.
+There are several approaches to fine tuning - this is one of them.
 '''
 from __future__ import division, print_function, absolute_import
 import tflearn
@@ -47,11 +50,11 @@ regression = regression(softmax, optimizer='adam',
 model = tflearn.DNN(regression, checkpoint_path='cifar_apply',
                     max_checkpoints=3, tensorboard_verbose=0)
 # Load pre-existing model, restoring all weights, except softmax layer ones
-model.load('./models/cifar_10_50_96')
+model.load('./models/cifar_1_50_96')
 
 # Start finetuning
 model.fit(X, Y, n_epoch=1, validation_set=(X_test, Y_test), shuffle=True, 
           show_metric=True, batch_size=64, snapshot_step=200,
           snapshot_epoch=False, run_id='cifar_apply')
 
-model.save('cifar_apply_1')
+model.save('./models/cifar_apply_1')

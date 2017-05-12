@@ -16,7 +16,8 @@ import tensorflow as tf
 sess = tf.Session()
 
 ###### Numerical Predictions ######
-x_vals = tf.linspace(-1., 1., 500)
+#try different values
+x_vals = tf.linspace(-2., 2., 1000)
 target = tf.constant(0.)
 
 # L2 loss
@@ -33,7 +34,7 @@ l1_y_out = sess.run(l1_y_vals)
 x_array = sess.run(x_vals)
 plt.plot(x_array, l2_y_out, 'b-', label='L2 Loss')
 plt.plot(x_array, l1_y_out, 'r--', label='L1 Loss')
-plt.ylim(-0.2, 0.4)
+plt.ylim(-0.2, 5)
 plt.legend(loc='lower right', prop={'size': 11})
 plt.show()
 sess.close()

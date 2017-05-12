@@ -2,7 +2,7 @@
 #-------------------------------------
 #
 #script based on the:
-# Implementation of a simple MLP network with 
+# Implementation of a simple MLP network with
 # one hidden layer.
 #
 # Linear Regression
@@ -66,20 +66,20 @@ def train_model():
     predict = yhat
 
     # Backward propagation
-    cost    = tf.reduce_mean(tf.sqrt(tf.pow(predict-y, 2)))
+    cost = tf.reduce_mean(tf.pow(predict-y, 2))
+    RMSE = tf.sqrt(tf.reduce_mean(tf.pow(predict-y, 2)))
     updates = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
 
     # Run SGD
     sess = tf.Session()
     init = tf.global_variables_initializer()
     sess.run(init)
-    for epoch in range(15):
+    for epoch in range(80):
         # Train with each example
         for i in range(len(train_X)):
             sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
-
-            train_accuracy = sess.run(cost, feed_dict={X: train_X, y: train_y})
-            test_accuracy  = sess.run(cost, feed_dict={X: test_X, y: test_y})
+            train_accuracy = sess.run(RMSE, feed_dict={X: train_X, y: train_y})
+            test_accuracy  = sess.run(RMSE, feed_dict={X: test_X, y: test_y})
 
         print("Epoch = %d, train MSE = %.2f, test MSE = %.2f"
               % (epoch + 1, train_accuracy,  test_accuracy))

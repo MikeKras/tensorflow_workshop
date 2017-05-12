@@ -8,6 +8,7 @@ Links:
 """
 from __future__ import division, print_function, absolute_import
 
+import os
 import tflearn
 from tflearn.data_utils import shuffle, to_categorical
 from tflearn.layers.core import input_data, dropout, fully_connected
@@ -18,6 +19,8 @@ from tflearn.data_augmentation import ImageAugmentation
 
 # Data loading and preprocessing
 from tflearn.datasets import cifar10
+
+#model_path = '/home/michal/DataScience/Data Scientist/Udacity/Deep Learning/Assignment1/'
 (X, Y), (X_test, Y_test) = cifar10.load_data('cifar-10-batches-py')
 X, Y = shuffle(X, Y)
 Y = to_categorical(Y, 10)
