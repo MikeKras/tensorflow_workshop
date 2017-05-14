@@ -24,19 +24,6 @@ from sklearn.model_selection import train_test_split
 RANDOM_SEED = 42
 tf.set_random_seed(RANDOM_SEED)
 
-
-def init_weights(shape):
-    """ Weight initialization """
-    weights = tf.random_normal(shape, stddev=0.1)
-    return tf.Variable(weights)
-
-def forwardprop(X, w_1):
-    """
-    Forward-propagation.
-    """
-    yhat = tf.matmul(X, w_1)  # The \sigma function
-    return yhat
-
 def get_iris_data():
     """ Read the iris data set and split them into training and test sets """
     iris = datasets.load_iris()
@@ -65,10 +52,9 @@ def train_regression():
     y = tf.placeholder("float", shape=[None, y_size])
 
     # Weight initializations
-    w_1 = init_weights((x_size, y_size))
-
+    w_1 = tf.Variable(tf.random_normal([x_size, y_sizes], stddev=0.1))
     # Forward propagation
-    yhat = forwardprop(X, w_1)
+    yhat = tf.matmul(X, w_1)
     predict = tf.argmax(yhat, axis=1)
     # Backward propagation
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))

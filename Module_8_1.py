@@ -31,6 +31,8 @@ def recurrent_neural_network(x):
     x = tf.reshape(x, [-1, chunk_size])
     x = tf.split(x, n_chunks, 0)
 
+    #x=tf.unstack(x, axis=1)
+
     lstm_cell = rnn.BasicLSTMCell(rnn_size) 
     outputs, states = rnn.static_rnn(lstm_cell, x, dtype=tf.float32)
 
