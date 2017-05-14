@@ -87,8 +87,6 @@ def train_neural_network():
         for i in range(int(X_test.shape[0] / batch_size)):
             acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
                                       y: Y_test[(i*batch_size):((i+1)*batch_size)], keep_prob: 1}))
-        test = output.eval({x: X_test[0:50],
-                           y: Y_test[0:50], keep_prob: 1})
         print('Accuracy:', sess.run(tf.reduce_mean(acc)))
         print(acc)
         return test

@@ -36,7 +36,7 @@ def recurrent_neural_network(x):
     lstm_cell = rnn.BasicLSTMCell(rnn_size) 
     outputs, states = rnn.static_rnn(lstm_cell, x, dtype=tf.float32)
 
-    output = tf.matmul(outputs[-1],layer['weights']) + layer['biases']
+    output = tf.matmul(outputs[-1], layer['weights']) + layer['biases']
 
     return output
 
