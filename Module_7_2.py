@@ -88,11 +88,8 @@ def train_neural_network():
             acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
                                       y: Y_test[(i*batch_size):((i+1)*batch_size)], keep_prob: 1}))
         print('Accuracy:', sess.run(tf.reduce_mean(acc)))
-        print(acc)
-        return test
 
-
-test = train_neural_network()
+train_neural_network()
 
 # Prepare CNN neural network for the Iris data.
 # Use:

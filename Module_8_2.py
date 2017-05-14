@@ -18,11 +18,11 @@ X, Y = shuffle(X, Y)
 Y = to_categorical(Y, 10)
 Y_test = to_categorical(Y_test, 10)
 
-hm_epochs = 3
+hm_epochs = 8
 n_classes = 10
 batch_size = 128
-chunk_size = 32
-n_chunks = 32*3
+chunk_size = 32*3
+n_chunks = 32
 rnn_size = 128
 
 graph = tf.Graph()
@@ -66,7 +66,6 @@ def train_neural_network():
             acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
                                       y: Y_test[(i*batch_size):((i+1)*batch_size)]}))
         print('Accuracy:', sess.run(tf.reduce_mean(acc)))
-        print(acc)
 
 train_neural_network()
 
