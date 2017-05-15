@@ -55,11 +55,4 @@ print(sess.run(y, feed_dict={x: rand_array}))
 # #    feed x
 # #    look at y
 
-# #Print results using single initializer 
-
-
-x = tf.placeholder(tf.float32, shape=(2, 2))
-#x**2 + x
-y = tf.add(tf.multiply(x, x), x)
-rand_array_2 = np.random.rand(2, 2)
-print(sess.run(y, feed_dict ={x: rand_array_2}))
+# #Print results using single initializer

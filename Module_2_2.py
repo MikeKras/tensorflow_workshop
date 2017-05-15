@@ -10,25 +10,31 @@ import numpy as np
 sess = tf.Session()
 
 #Declaration of matrices
+tensor = tf.zeros([1, 10])
+print(tensor)
+
+constant = tf.constant([2, 3])
+print(constant)
 
 #Identity
 identity_matrix = tf.diag(np.ones(3))
+identity_matrix = tf.cast(identity_matrix,dtype='float')
 print(sess.run(identity_matrix))
 
 #Constant
 const_matrix = tf.fill([2, 3], -1.0)
 print(sess.run(const_matrix))
 
-#Random Uniform
-uniform_matrix = tf.random_uniform([3,3]) 
-print(sess.run(uniform_matrix))
+#Converted
+converted_matrix =  tf.convert_to_tensor(np.array([[1., 2., 3.], [-3., -7., -1.], [0., 5., -2.]]))
+print(sess.run(converted_matrix))
 
 # Add two matrices
 print(sess.run(tf.add(identity_matrix, identity_matrix)))
 print(sess.run(tf.subtract(identity_matrix, identity_matrix)))
 
 #Matrix multiplication and transpose
-uni_times_const = tf.matmul(uniform_matrix, uniform_matrix)
+uni_times_const = tf.matmul(const_matrix, identity_matrix)
 print(sess.run(tf.transpose(uni_times_const)))
 
 #Inverse

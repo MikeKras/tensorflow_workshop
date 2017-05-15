@@ -36,7 +36,6 @@ with graph.as_default():
     inp = tf.transpose(inp, [1, 0, 2])
     inp = tf.reshape(inp, [-1, chunk_size])
     inp = tf.split(inp, n_chunks, 0)
-
     #x=tf.unstack(x, axis=1)
 
     lstm_cell = rnn.BasicLSTMCell(rnn_size)
@@ -52,7 +51,6 @@ with graph.as_default():
 def train_neural_network():
     with tf.Session(graph=graph) as sess:
         sess.run(tf.global_variables_initializer())
-
         for epoch in range(hm_epochs):
             epoch_loss = 0
             for step in range(int(X.shape[0]/batch_size)):
