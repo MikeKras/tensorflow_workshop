@@ -21,14 +21,14 @@ print(variable)
 initialize_ = tf.global_variables_initializer()
 
 
-with tf.Session() as sess:
-	sess.run(initialize_)
-	print("Variable returns: ", variable)
-	print("sess.run(variable) returns:", sess.run(variable))
-	print("tensor returns: ", tensor)
-	print("sess.run(tensor) returns:", sess.run(tensor))
-	print("Variable returns: ", constant)
-	print("sess.run(variable) returns:", sess.run(constant))
+sess = tf.Session()
+sess.run(initialize_)
+print("Variable returns: ", variable)
+print("sess.run(variable) returns:", sess.run(variable))
+print("tensor returns: ", tensor)
+print("sess.run(tensor) returns:", sess.run(tensor))
+print("Variable returns: ", constant)
+print("sess.run(variable) returns:", sess.run(constant))
 
 #Session initializaiton
 sess = tf.Session()

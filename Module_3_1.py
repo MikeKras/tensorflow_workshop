@@ -52,7 +52,7 @@ def train_regression():
     y = tf.placeholder("float", shape=[None, y_size])
 
     # Weight initializations
-    w_1 = tf.Variable(tf.random_normal([x_size, y_sizes], stddev=0.1))
+    w_1 = tf.Variable(tf.random_normal([x_size, y_size], stddev=0.1))
     # Forward propagation
     yhat = tf.matmul(X, w_1)
     predict = tf.argmax(yhat, axis=1)

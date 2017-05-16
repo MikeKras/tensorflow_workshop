@@ -35,7 +35,7 @@ print(sess.run(tf.subtract(identity_matrix, identity_matrix)))
 
 #Matrix multiplication and transpose
 uni_times_const = tf.matmul(const_matrix, identity_matrix)
-print(sess.run(tf.transpose(uni_times_const)))
+print(sess.run((uni_times_const)))
 
 #Inverse
 two_identity = tf.add(identity_matrix, identity_matrix)

@@ -17,10 +17,11 @@ print(sess.run(const_matrix))
 normal_matrix = tf.random_normal([3,2]) 
 print(sess.run(normal_matrix))
 # Create diag_matrix dim 3x3 with 4 on the diagonal
-diag_matrix = 4*tf.diag(np.ones(3))
+diag_matrix = 4*tf.diag(np.ones(2))
 print(sess.run(diag_matrix))
 # Multiply constant matrix and rn_matrix
 mm = tf.matmul(const_matrix, normal_matrix)
 print(sess.run(mm))
 # Add diag_matrix
 # Print results
+adding = tf.add(mm,diag_matrix)

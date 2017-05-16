@@ -54,7 +54,7 @@ def train_model():
 
     # Backward propagation
     cost = tf.reduce_mean(tf.pow(predict-y, 2))
-    RMSE = tf.sqrt(tf.reduce_mean(tf.pow(predict-y, 2)))
+    RMSE = tf.sqrt(cost)
     updates = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
 
     # Run SGD

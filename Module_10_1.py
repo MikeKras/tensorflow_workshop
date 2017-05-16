@@ -53,8 +53,6 @@ network = regression(network, optimizer='adam',
                      learning_rate=0.001)
 
 # Train using classifier
-model = tflearn.DNN(network, tensorboard_verbose=0)
+model = tflearn.DNN(network, tensorboard_verbose=3)
 model.fit(X, Y, n_epoch=1, shuffle=True, validation_set=(X_test, Y_test),
-show_metric=True, batch_size=96, run_id='cifar10_cnn') 		
-
-model.save('./models/cifar_1_50_96')
+show_metric=True, batch_size=96)
