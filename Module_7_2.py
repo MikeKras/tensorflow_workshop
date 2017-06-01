@@ -22,20 +22,6 @@ Y_test = to_categorical(Y_test, 10)
 n_classes = 10
 batch_size = 100
 
-
-
-keep_rate = 0.8
-
-
-
-def conv2d(x, W):
-    return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
-
-
-def maxpool2d(x):
-    # size of window movement of window
-    return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-
 graph = tf.Graph()
 
 with graph.as_default():
@@ -54,11 +40,11 @@ with graph.as_default():
     keep_prob = tf.placeholder(tf.float32)
     #x = tf.reshape(x, shape=[-1, 28, 28, 1])
 
-    conv1 = tf.nn.relu6(conv2d(x, weights['W_conv1']) + biases['b_conv1'])
-    conv1 = maxpool2d(conv1)
+    conv1 = tf.nn.relu(tf.nn.conv2d(x, weights['W_conv1'], strides=[1, 1, 1, 1], padding='SAME') + biases['b_conv1'])
+    conv1 = tf.nn.max_pool(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
     conv1 = tf.nn.dropout(conv1, keep_prob)
-    conv2 = tf.nn.softsign(conv2d(conv1, weights['W_conv2']) + biases['b_conv2'])
-    conv2 = maxpool2d(conv2)
+    conv2 = tf.nn.relu(tf.nn.conv2d(conv1, weights['W_conv2'], strides=[1, 1, 1, 1], padding='SAME') + biases['b_conv2'])
+    conv2 = tf.nn.max_pool(conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
     fc = tf.reshape(conv2, [-1, 8 * 8 * 64])
     fc = tf.nn.relu(tf.matmul(fc, weights['W_fc']) + biases['b_fc'])
@@ -70,26 +56,23 @@ with graph.as_default():
     correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
     accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
-def train_neural_network():
-    hm_epochs = 10
-    with tf.Session(graph=graph) as sess:
-        sess.run(tf.global_variables_initializer())
+hm_epochs = 10
+with tf.Session(graph=graph) as sess:
+    sess.run(tf.global_variables_initializer())
 
-        for epoch in range(hm_epochs):
-            epoch_loss = 0
-            for step in range(int(X.shape[0] / batch_size)):
-                epoch_x = X[(step*batch_size):((step+1)*batch_size)]
-                epoch_y = Y[(step * batch_size):((step + 1) * batch_size)]
-                _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y, keep_prob: 0.8})
-                epoch_loss += c
-            print('Epoch', epoch + 1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
-        acc = []
-        for i in range(int(X_test.shape[0] / batch_size)):
-            acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
-                                      y: Y_test[(i*batch_size):((i+1)*batch_size)], keep_prob: 1}))
-        print('Accuracy:', sess.run(tf.reduce_mean(acc)))
-
-train_neural_network()
+    for epoch in range(hm_epochs):
+        epoch_loss = 0
+        for step in range(int(X.shape[0] / batch_size)):
+            epoch_x = X[(step*batch_size):((step+1)*batch_size)]
+            epoch_y = Y[(step * batch_size):((step + 1) * batch_size)]
+            _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y, keep_prob: 0.8})
+            epoch_loss += c
+        print('Epoch', epoch + 1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
+    acc = []
+    for i in range(int(X_test.shape[0] / batch_size)):
+        acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
+                                  y: Y_test[(i*batch_size):((i+1)*batch_size)], keep_prob: 1}))
+    print('Accuracy:', sess.run(tf.reduce_mean(acc)))
 
 # Prepare CNN neural network for the Iris data.
 # Use:

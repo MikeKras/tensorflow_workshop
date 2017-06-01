@@ -62,10 +62,8 @@ merged_summary_op = tf.summary.merge_all()
 # Launch the graph
 with tf.Session() as sess:
     sess.run(init)
-
     # op to write logs to Tensorboard
     summary_writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
-
     # Training cycle
     for epoch in range(training_epochs):
         avg_cost = 0.
@@ -92,7 +90,7 @@ with tf.Session() as sess:
     print("Accuracy:", acc.eval({x: mnist.test.images, y: mnist.test.labels}))
 
     print("Run the command line:\n" \
-          "--> tensorboard --logdir=/tmp/tensorflow_logs " \
+          "--> tensorboard --logdir=/tmp/tensorflow_logs" \
           "\nThen open http://127.0.1.1:6006/ into your web browser")
 
 

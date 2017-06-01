@@ -14,14 +14,6 @@ mnist = input_data.read_data_sets("data/", one_hot = True)
 n_classes = 10
 batch_size = 128
 
-
-def conv2d(x, W):
-    return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding='SAME')
-
-def maxpool2d(x):
-    #size of window movement of window
-    return tf.nn.max_pool(x, ksize=[1,2,2,1], strides=[1,2,2,1], padding='SAME')
-
 graph = tf.Graph()
 
 with graph.as_default():
@@ -41,11 +33,11 @@ with graph.as_default():
 
     inp = tf.reshape(x, shape=[-1, 28, 28, 1])
 
-    conv1 = tf.nn.relu6(conv2d(inp, weights['W_conv1']) + biases['b_conv1'])
-    conv1 = maxpool2d(conv1)
+    conv1 = tf.nn.relu(tf.nn.conv2d(inp, weights['W_conv1'], strides=[1,1,1,1], padding='SAME') + biases['b_conv1'])
+    conv1 = tf.nn.max_pool(conv1, ksize=[1,2,2,1], strides=[1,2,2,1], padding='SAME')
     
-    conv2 = tf.nn.softsign(conv2d(conv1, weights['W_conv2']) + biases['b_conv2'])
-    conv2 = maxpool2d(conv2)
+    conv2 = tf.nn.relu(tf.nn.conv2d(conv1, weights['W_conv2'], strides=[1,1,1,1], padding='SAME') + biases['b_conv2'])
+    conv2 = tf.nn.max_pool(conv2, ksize=[1,2,2,1], strides=[1,2,2,1], padding='SAME')
 
     fc = tf.reshape(conv2,[-1, 7*7*64])
     fc = tf.nn.relu(tf.matmul(fc, weights['W_fc'])+biases['b_fc'])
@@ -57,27 +49,24 @@ with graph.as_default():
     correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
     accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
-def train_neural_network(x):
+hm_epochs = 3
+with tf.Session(graph=graph) as sess:
+    sess.run(tf.global_variables_initializer())
 
-    hm_epochs = 3
-    with tf.Session(graph=graph) as sess:
-        sess.run(tf.global_variables_initializer())
+    for epoch in range(hm_epochs):
+        epoch_loss = 0
+        for _ in range(int(mnist.train.num_examples/batch_size)):
+            epoch_x, epoch_y = mnist.train.next_batch(batch_size)
+            _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y, keep_prob: 0.8})
+            epoch_loss += c
 
-        for epoch in range(hm_epochs):
-            epoch_loss = 0
-            for _ in range(int(mnist.train.num_examples/batch_size)):
-                epoch_x, epoch_y = mnist.train.next_batch(batch_size)
-                _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y, keep_prob: 0.8})
-                epoch_loss += c
+        print('Epoch', epoch+1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
 
-            print('Epoch', epoch+1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
+    acc = []
+    for i in range(100):
+        acc.append(accuracy.eval({x: mnist.test.images[(1 + (i*100)):((i+1)*100),], y: mnist.test.labels[(1 + (i*100)):((i+1)*100),], keep_prob:1}))
+    print('Accuracy:', sess.run(tf.reduce_mean(acc)))
 
-        acc = []
-        for i in range(100):
-            acc.append(accuracy.eval({x: mnist.test.images[(1 + (i*100)):((i+1)*100),], y: mnist.test.labels[(1 + (i*100)):((i+1)*100),], keep_prob:1}))
-        print('Accuracy:', sess.run(tf.reduce_mean(acc)))
-
-train_neural_network(x)
 
 #Prepare CNN neural network for the Iris data.
 #Use:

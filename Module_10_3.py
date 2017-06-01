@@ -50,5 +50,3 @@ model = tflearn.DNN(regression, tensorboard_verbose=3)
 model.fit(train_X, train_y, n_epoch=60, validation_set=(test_X, test_y), shuffle=True,
           show_metric=True, batch_size=1, snapshot_step=200,
           snapshot_epoch=False, run_id='cifar_apply')
-
-model.save('./models/cifar_apply_1')

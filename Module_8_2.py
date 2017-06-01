@@ -20,7 +20,7 @@ Y_test = to_categorical(Y_test, 10)
 
 hm_epochs = 8
 n_classes = 10
-batch_size = 128
+batch_size = 100
 chunk_size = 32*3
 n_chunks = 32
 rnn_size = 128
@@ -47,25 +47,21 @@ with graph.as_default():
     correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
     accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
-
-def train_neural_network():
-    with tf.Session(graph=graph) as sess:
-        sess.run(tf.global_variables_initializer())
-        for epoch in range(hm_epochs):
-            epoch_loss = 0
-            for step in range(int(X.shape[0]/batch_size)):
-                epoch_x = X[(step * batch_size):((step + 1) * batch_size)]
-                epoch_y = Y[(step * batch_size):((step + 1) * batch_size)]
-                _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y})
-                epoch_loss += c
-            print('Epoch', epoch+1, 'completed out of',hm_epochs,'loss:',epoch_loss)
-        acc = []
-        for i in range(int(X_test.shape[0] / batch_size)):
-            acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
-                                      y: Y_test[(i*batch_size):((i+1)*batch_size)]}))
-        print('Accuracy:', sess.run(tf.reduce_mean(acc)))
-
-train_neural_network()
+with tf.Session(graph=graph) as sess:
+    sess.run(tf.global_variables_initializer())
+    for epoch in range(hm_epochs):
+        epoch_loss = 0
+        for step in range(int(X.shape[0]/batch_size)):
+            epoch_x = X[(step * batch_size):((step + 1) * batch_size)]
+            epoch_y = Y[(step * batch_size):((step + 1) * batch_size)]
+            _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y})
+            epoch_loss += c
+        print('Epoch', epoch+1, 'completed out of',hm_epochs,'loss:',epoch_loss)
+    acc = []
+    for i in range(int(X_test.shape[0] / batch_size)):
+        acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
+                                  y: Y_test[(i*batch_size):((i+1)*batch_size)]}))
+    print('Accuracy:', sess.run(tf.reduce_mean(acc)))
 
 #Prepare RNN neural network for the Iris data.
 #Use:
