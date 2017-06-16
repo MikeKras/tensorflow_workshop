@@ -11,39 +11,42 @@ n_nodes_hl3 = 20
 
 n_classes = 3
 
-X = tf.placeholder('float', [None, 5])
-y = tf.placeholder('float')
 
-def get_iris_data():
-    """ Read the iris data set and split them into training and test sets """
-    iris   = datasets.load_iris()
-    data   = iris["data"]
-    target = iris["target"]
+""" Read the iris data set and split them into training and test sets """
+iris   = datasets.load_iris()
+data   = iris["data"]
+target = iris["target"]
 
-    # Prepend the column of 1s for bias
-    N, M  = data.shape
-    all_X = np.ones((N, M + 1))
-    all_X[:, 1:] = data
+# Prepend the column of 1s for bias
+N, M  = data.shape
+all_X = np.ones((N, M + 1))
+all_X[:, 1:] = data
 
-    # Convert into one-hot vectors
-    num_labels = len(np.unique(target))
-    all_Y = np.eye(num_labels)[target]  # One liner trick!
-    return train_test_split(all_X, all_Y, test_size=0.33, random_state=RANDOM_SEED)
+# Convert into one-hot vectors
+num_labels = len(np.unique(target))
+all_Y = np.eye(num_labels)[target]  # One liner trick!
+train_X, test_X, train_y, test_y =  train_test_split(all_X, all_Y, test_size=0.33, random_state=RANDOM_SEED)
 
+x_size = train_X.shape[1]   # Number of input nodes: 4 features and 1 bias
+y_size = train_y.shape[1]
 
-def neural_network_model(data):
+graph = tf.Graph()
+
+with graph.as_default():
+    X = tf.placeholder("float", shape=[None, x_size])
+    y = tf.placeholder("float", shape=[None, y_size])
+
     hidden_1_layer = {'weights':tf.Variable(tf.random_normal([5, n_nodes_hl1])),
                       'biases':tf.Variable(tf.random_normal([n_nodes_hl1]))}
 
     hidden_2_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2])),
                       'biases':tf.Variable(tf.random_normal([n_nodes_hl2]))}
-
+    
     hidden_3_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl2, n_nodes_hl3])),
                       'biases':tf.Variable(tf.random_normal([n_nodes_hl3]))}
 
     output_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl3, n_classes])),
                     'biases':tf.Variable(tf.random_normal([n_classes])),}
-
 
     l1 = tf.add(tf.matmul(data,hidden_1_layer['weights']), hidden_1_layer['biases'])
     l1 = tf.nn.relu(l1)
@@ -56,27 +59,10 @@ def neural_network_model(data):
 
     output = tf.matmul(l3,output_layer['weights']) + output_layer['biases']
 
-    return output
-
-
-
-def train_regression():
-    train_X, test_X, train_y, test_y = get_iris_data()
-
-    # Layer's sizes
-    x_size = train_X.shape[1]   # Number of input nodes: 4 features and 1 bias
-    y_size = train_y.shape[1]   # Number of outcomes (3 iris flowers)
-
-    # Symbols
-    X = tf.placeholder("float", shape=[None, x_size])
-    y = tf.placeholder("float", shape=[None, y_size])
-
-    # Forward propagation
-    yhat    = neural_network_model(X)
-    predict = tf.argmax(yhat, axis=1)
+    predict = tf.argmax(output, axis=1)
 
     # Backward propagation
-    cost    = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=output))
     updates = tf.train.GradientDescentOptimizer(0.001).minimize(cost)
 
     # Run SGD

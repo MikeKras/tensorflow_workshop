@@ -87,6 +87,9 @@ with open("model.yaml", "w") as yaml_file:
     yaml_file.write(model_yaml)
 model.predict (X_test, batch_size=batch_size, verbose=1)
 
+#model - save weights only per name and load to named layers
+
+
 # Prepare CNN using KERAS
 #- copy the architecture from the Module 7_1
 #- use siftsign and relu6 activation functions where required

@@ -7,7 +7,7 @@ last layer (softmax) that will be retrained to match the new task (finetuning).
 Using pretrained model for further training with other inputs.
 There are several approaches to fine tuning - this is one of them.
 '''
-#from __future__ import division, print_function, absolute_import
+from __future__ import division, print_function, absolute_import
 import tflearn
 from tflearn.data_preprocessing import ImagePreprocessing
 import os
@@ -19,20 +19,16 @@ from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.estimator import regression
 from tflearn.datasets import cifar10
 from tflearn.data_utils import shuffle, to_categorical
-from tensorflow.examples.tutorials.mnist.input_data import read_data_sets
 
-mnist = read_data_sets("data", one_hot = True)
+num_classes = 10 # num of your dataset
 
-X = mnist.train.images
-Y = mnist.train.labels
-X_test = mnist.test.images
-Y_test = mnist.test.labels
-X = np.reshape(X, newshape=(-1, 28, 28, 1))
-X_test = np.reshape(X_test, newshape=(-1, 28, 28, 1))
+(X, Y), (X_test, Y_test) = cifar10.load_data('cifar-10-batches-py')
+X, Y = shuffle(X, Y)
+Y = to_categorical(Y, num_classes)
+Y_test = to_categorical(Y_test, num_classes)
 
-num_classes = Y.shape[1]
-
-network = input_data(shape=[None, 28, 28, 1])
+# Redefinition of convnet_cifar10 network
+network = input_data(shape=[None, 32, 32, 3])
 network = conv_2d(network, 32, 3, activation='relu')
 network = max_pool_2d(network, 2)
 network = dropout(network, 0.75) 
@@ -48,14 +44,14 @@ regression = regression(softmax, optimizer='adam',
                         loss='categorical_crossentropy',
                         learning_rate=0.001)  
 
-model = tflearn.DNN(regression, checkpoint_path='mnist_apply',
+model = tflearn.DNN(regression, checkpoint_path='cifar_apply',
                     max_checkpoints=3, tensorboard_verbose=0)
 # Load pre-existing model, restoring all weights, except softmax layer ones
-model.load('./models/mnist_apply_1')
+model.load('./models/cifar_1_50_96')
 
 # Start finetuning
 model.fit(X, Y, n_epoch=1, validation_set=(X_test, Y_test), shuffle=True, 
           show_metric=True, batch_size=64, snapshot_step=200,
-          snapshot_epoch=False, run_id='mnist_apply')
+          snapshot_epoch=False, run_id='cifar_apply')
 
-model.save('./models/mnist_apply_1')
+model.save('./models/cifar_apply_1')

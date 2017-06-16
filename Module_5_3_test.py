@@ -52,7 +52,7 @@ with tf.name_scope('Accuracy'):
 
 tf.summary.scalar("Loss",cost)
 tf.summary.scalar("Acc",acc)
-merged_summary_op =  tf.summary.merge_all()
+merged_summary_op = tf.summary.merge_all()
 
 # Run SGD
 sess = tf.Session()
