@@ -1,11 +1,11 @@
 # Tensorflow workshop with Jan Idziak
-#-------------------------------------
+# -------------------------------------
 #
-#script harvested from:
-#https://pythonprogramming.net
+# script harvested from:
+# https://pythonprogramming.net
 #
 # Implementing Recurent Neural Network
-#---------------------------------------
+# ---------------------------------------
 #
 import tensorflow as tf
 from tensorflow.contrib import rnn
@@ -21,7 +21,7 @@ Y_test = to_categorical(Y_test, 10)
 hm_epochs = 8
 n_classes = 10
 batch_size = 100
-chunk_size = 32*3
+chunk_size = 32 * 3
 n_chunks = 32
 rnn_size = 128
 
@@ -36,7 +36,7 @@ with graph.as_default():
     inp = tf.transpose(inp, [1, 0, 2])
     inp = tf.reshape(inp, [-1, chunk_size])
     inp = tf.split(inp, n_chunks, 0)
-    #x=tf.unstack(x, axis=1)
+    # inp = tf.unstack(x, axis=1)
 
     lstm_cell = rnn.BasicLSTMCell(rnn_size)
     outputs, states = rnn.static_rnn(lstm_cell, inp, dtype=tf.float32)
@@ -51,22 +51,22 @@ with tf.Session(graph=graph) as sess:
     sess.run(tf.global_variables_initializer())
     for epoch in range(hm_epochs):
         epoch_loss = 0
-        for step in range(int(X.shape[0]/batch_size)):
+        for step in range(int(X.shape[0] / batch_size)):
             epoch_x = X[(step * batch_size):((step + 1) * batch_size)]
             epoch_y = Y[(step * batch_size):((step + 1) * batch_size)]
             _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y})
             epoch_loss += c
-        print('Epoch', epoch+1, 'completed out of',hm_epochs,'loss:',epoch_loss)
+        print('Epoch', epoch + 1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
     acc = []
     for i in range(int(X_test.shape[0] / batch_size)):
-        acc.append(accuracy.eval({x: X_test[(i*batch_size):((i+1)*batch_size)],
-                                  y: Y_test[(i*batch_size):((i+1)*batch_size)]}))
+        acc.append(accuracy.eval({x: X_test[(i * batch_size):((i + 1) * batch_size)],
+                                  y: Y_test[(i * batch_size):((i + 1) * batch_size)]}))
     print('Accuracy:', sess.run(tf.reduce_mean(acc)))
 
-#Prepare RNN neural network for the Iris data.
-#Use:
-# - BasicLSTM cell
-# - Initialize data with random uniform distribution variables
-# - Put two rows of the picture as a chunk size
-# - RNN size should be 56
-# - Use SGD optimizer
+    # Prepare RNN neural network for the Iris data.
+    # Use:
+    # - BasicLSTM cell
+    # - Initialize data with random uniform distribution variables
+    # - Put two rows of the picture as a chunk size
+    # - RNN size should be 56
+    # - Use SGD optimizer

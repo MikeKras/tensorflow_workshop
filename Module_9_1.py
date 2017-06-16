@@ -35,7 +35,7 @@ print ("Reading data")
 trainDat = np.genfromtxt ('./input/train.csv', skip_header=1, delimiter=',')
 X_test = np.genfromtxt ('./input/test.csv', skip_header=1, delimiter=',')
 Y_train = trainDat[:,0]
-X_train = np.delete (trainDat, 0, 1)
+X_train = np.delete(trainDat, 0, 1)
 
 print ("Training data size: ", X_train.shape)
 print ("Training labels shape: ", Y_train.shape)
