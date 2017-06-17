@@ -25,42 +25,41 @@ logs_path = '/tmp/tensorflow_logs/example'
 
 # tf Graph Input
 # mnist data image of shape 28*28=784
-x = tf.placeholder(tf.float32, [None, 784], name='InputData')
-# 0-9 digits recognition => 10 classes
-y = tf.placeholder(tf.float32, [None, 10], name='LabelData')
+graph = tf.Graph()
+with graph.as_default():
+    x = tf.placeholder(tf.float32, [None, 784], name='InputData')
+    # 0-9 digits recognition => 10 classes
+    y = tf.placeholder(tf.float32, [None, 10], name='LabelData')
 
-# Set model weights
-W = tf.Variable(tf.zeros([784, 10]), name='Weights')
-b = tf.Variable(tf.zeros([10]), name='Bias')
+    # Set model weights
+    W = tf.Variable(tf.zeros([784, 10]), name='Weights')
+    b = tf.Variable(tf.zeros([10]), name='Bias')
 
-# Construct model and encapsulating all ops into scopes, making
-# Tensorboard's Graph visualization more convenient
-with tf.name_scope('Model'):
-    # Model
-    pred = tf.nn.softmax(tf.matmul(x, W) + b) # Softmax
-with tf.name_scope('Loss'):
-    # Minimize error using cross entropy
-    cost = tf.reduce_mean(-tf.reduce_sum(y*tf.log(pred), reduction_indices=1))
-with tf.name_scope('SGD'):
-    # Gradient Descent
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
-with tf.name_scope('Accuracy'):
-    # Accuracy
-    acc = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
-    acc = tf.reduce_mean(tf.cast(acc, tf.float32))
-
-# Initializing the variables
-init = tf.global_variables_initializer()
-
-# Create a summary to monitor cost tensor
-tf.summary.scalar("loss", cost)
-# Create a summary to monitor accuracy tensor
-tf.summary.scalar("accuracy", acc)
-# Merge all summaries into a single op
-merged_summary_op = tf.summary.merge_all()
+    # Construct model and encapsulating all ops into scopes, making
+    # Tensorboard's Graph visualization more convenient
+    with tf.name_scope('Model'):
+        # Model
+        pred = tf.nn.softmax(tf.matmul(x, W) + b) # Softmax
+    with tf.name_scope('Loss'):
+        # Minimize error using cross entropy
+        cost = tf.reduce_mean(-tf.reduce_sum(y*tf.log(pred), reduction_indices=1))
+    with tf.name_scope('SGD'):
+        # Gradient Descent
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
+    with tf.name_scope('Accuracy'):
+        # Accuracy
+        acc = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
+        acc = tf.reduce_mean(tf.cast(acc, tf.float32))
+    # Create a summary to monitor cost tensor
+    tf.summary.scalar("loss", cost)
+    # Create a summary to monitor accuracy tensor
+    tf.summary.scalar("accuracy", acc)
+    # Merge all summaries into a single op
+    merged_summary_op = tf.summary.merge_all()
 
 # Launch the graph
-with tf.Session() as sess:
+with tf.Session(graph=graph) as sess:
+    init = tf.global_variables_initializer()
     sess.run(init)
     # op to write logs to Tensorboard
     summary_writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
