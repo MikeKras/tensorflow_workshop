@@ -56,6 +56,9 @@ with graph.as_default():
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=y))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
 
+    correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+
 hm_epochs = 3
 with tf.Session(graph=graph) as sess:
     sess.run(tf.global_variables_initializer())
@@ -67,7 +70,6 @@ with tf.Session(graph=graph) as sess:
             epoch_loss += c
         print('Epoch', epoch, 'completed out of', hm_epochs, 'loss:', epoch_loss)
 
-    correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+
 
     print('Accuracy:', accuracy.eval({x: mnist.test.images, y: mnist.test.labels}))

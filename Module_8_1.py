@@ -1,12 +1,6 @@
-# Tensorflow workshop with Jan Idziak
-# -------------------------------------
-#
-# script harvested from:
-# https://pythonprogramming.net
-#
-# Implementing Recurent Neural Network
+# Tensorflow workshop with Michal Krason
 # ---------------------------------------
-#
+
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 from tensorflow.contrib import rnn
@@ -28,11 +22,7 @@ with graph.as_default():
 
     layer = {'weights': tf.Variable(tf.random_normal([rnn_size, n_classes])),
              'biases': tf.Variable(tf.random_normal([n_classes]))}
-
-    inp = tf.transpose(x, [1, 0, 2])
-    inp = tf.reshape(inp, [-1, chunk_size])
-    inp = tf.split(inp, n_chunks, 0)
-    # inp=tf.unstack(x, axis=1)
+    inp = tf.unstack(x, axis=1)
     lstm_cell = rnn.BasicLSTMCell(rnn_size)
     outputs, states = rnn.static_rnn(lstm_cell, inp, dtype=tf.float32)
     output = tf.matmul(outputs[-1], layer['weights']) + layer['biases']

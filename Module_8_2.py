@@ -1,19 +1,13 @@
-# Tensorflow workshop with Jan Idziak
-# -------------------------------------
-#
-# script harvested from:
-# https://pythonprogramming.net
-#
-# Implementing Recurent Neural Network
+# Tensorflow workshop with Michal Krason
 # ---------------------------------------
-#
+
 import tensorflow as tf
 from tensorflow.contrib import rnn
 from tflearn.datasets import cifar10
 from tflearn.data_utils import shuffle, to_categorical
 import numpy as np
 
-(X, Y), (X_test, Y_test) = cifar10.load_data('cifar-10-batches-py')
+(X, Y), (X_test, Y_test) = cifar10.load_data()
 X, Y = shuffle(X, Y)
 Y = to_categorical(Y, 10)
 Y_test = to_categorical(Y_test, 10)
@@ -33,10 +27,7 @@ with graph.as_default():
     x = tf.placeholder('float', [None, 32, 32, 3])
     y = tf.placeholder('float', [None, 10])
     inp = tf.reshape(x, [-1, n_chunks, chunk_size])
-    inp = tf.transpose(inp, [1, 0, 2])
-    inp = tf.reshape(inp, [-1, chunk_size])
-    inp = tf.split(inp, n_chunks, 0)
-    # inp = tf.unstack(x, axis=1)
+    inp = tf.unstack(inp, axis=1)
 
     lstm_cell = rnn.BasicLSTMCell(rnn_size)
     outputs, states = rnn.static_rnn(lstm_cell, inp, dtype=tf.float32)

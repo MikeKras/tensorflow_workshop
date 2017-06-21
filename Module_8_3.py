@@ -1,3 +1,6 @@
+# Tensorflow workshop with Michal Krason
+# ---------------------------------------
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.contrib import rnn
@@ -26,17 +29,25 @@ with graph.as_default():
     x = tf.placeholder('int32', [None, max_len])
     y = tf.placeholder('int32')
     keep_prob = tf.placeholder('float32')
-    embeddings = tf.Variable(tf.random_uniform([max_features, embedding_size], -1.0, 1.0))
-    x_embedded = tf.nn.embedding_lookup(embeddings, x)
+
     layer = {'weights': tf.Variable(tf.random_normal([rnn_size, n_classes])),
              'biases': tf.Variable(tf.random_normal([n_classes]))}
+
+    embeddings = tf.Variable(tf.random_uniform([max_features, embedding_size], -1.0, 1.0))
+    x_embedded = tf.nn.embedding_lookup(embeddings, x)
     x_embedded = tf.unstack(x_embedded, axis=1)
+
     lstm_cell = rnn.BasicLSTMCell(rnn_size)
     outputs, states = rnn.static_rnn(lstm_cell, x_embedded, dtype=tf.float32)
+
     drop = tf.nn.dropout(outputs[-1], keep_prob)
     output = tf.matmul(drop, layer['weights']) + layer['biases']
+
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=y))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
+
+    correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
 with tf.Session(graph=graph) as sess:
     sess.run(tf.global_variables_initializer())
@@ -50,15 +61,4 @@ with tf.Session(graph=graph) as sess:
             epoch_loss += c
         print('Epoch', epoch + 1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
 
-    correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
-
-    accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
     print('Accuracy:', accuracy.eval({x: X_test, y: y_test, keep_prob: 1}))
-
-    # Prepare RNN neural network for the Iris data.
-    # Use:
-    # - BasicLSTM cell
-    # - Initialize data with random uniform distribution variables
-    # - Put two rows of the picture as a chunk size
-    # - RNN size should be 56
-    # - Use SGD optimizer

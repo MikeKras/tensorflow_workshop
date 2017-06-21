@@ -21,7 +21,7 @@ from tflearn.data_augmentation import ImageAugmentation
 from tflearn.datasets import cifar10
 
 #model_path = '/home/michal/DataScience/Data Scientist/Udacity/Deep Learning/Assignment1/'
-(X, Y), (X_test, Y_test) = cifar10.load_data('cifar-10-batches-py')
+(X, Y), (X_test, Y_test) = cifar10.load_data()
 X, Y = shuffle(X, Y)
 Y = to_categorical(Y, 10)
 Y_test = to_categorical(Y_test, 10)

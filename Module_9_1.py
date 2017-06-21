@@ -43,11 +43,11 @@ input_shape = (img_rows, img_cols, 1)
 
 model = Sequential()
 
-model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
-                        border_mode='valid',
+model.add(Convolution2D(nb_filters, kernel_size=(5,5),
+                        padding='valid',
                         input_shape=input_shape))
 model.add(Activation('relu'))
-model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+model.add(Convolution2D(nb_filters, kernel_size=(5,5)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=pool_size))
 model.add(Dropout(0.25))
@@ -63,7 +63,7 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])
 print("Starting training")
-model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, validation_data=(X_test, Y_test),
+model.fit(X_train, Y_train, batch_size=batch_size, epochs=nb_epoch, validation_data=(X_test, Y_test),
           verbose=1)
 model_yaml = model.to_yaml()
 with open("model.yaml", "w") as yaml_file:

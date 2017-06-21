@@ -54,27 +54,27 @@ with graph.as_default():
 
     output = tf.matmul(l3, output_layer['weights']) + output_layer['biases']
 
-    predict = tf.argmax(output, axis=1)
+    acc = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
+    acc = tf.reduce_mean(tf.cast(acc, tf.float32))
 
     # Backward propagation
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=output))
     updates = tf.train.GradientDescentOptimizer(0.001).minimize(cost)
 
     # Run SGD
-    sess = tf.Session()
+    with tf.Session(graph=graph) as sess:
+        init = tf.global_variables_initializer()
+        sess.run(init)
+        for epoch in range(15):
+            # Train with each example
+            for i in range(len(train_X)):
+                sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
+            print("Epoch = %d, train accuracy = %.2f%%, test accuracy = %.2f%%"
+                  % (epoch + 1, 100. * acc.eval({X: train_X, y: train_y}),
+                     100. * acc.eval({X: test_X, y: test_y})))
 
-    init = tf.global_variables_initializer()
-    sess.run(init)
-    for epoch in range(15):
-        # Train with each example
-        for i in range(len(train_X)):
-            sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
-
-        train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
-                                 sess.run(predict, feed_dict={X: train_X, y: train_y}))
-        test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
-                                sess.run(predict, feed_dict={X: test_X, y: test_y}))
-
-        print("Epoch = %d, train accuracy = %.2f%%, test accuracy = %.2f%%"
-              % (epoch + 1, 100. * train_accuracy, 100. * test_accuracy))
-    sess.close()
+            # predict = tf.argmax(output, axis=1)
+            # train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
+            #                          sess.run(predict, feed_dict={X: train_X, y: train_y}))
+            # test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
+            #                         sess.run(predict, feed_dict={X: test_X, y: test_y}))
