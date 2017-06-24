@@ -74,5 +74,4 @@ for epoch in range(70):
 sess.close()
 
 print("Run the command line:\n" \
-      "--> tensorboard --logdir=/tmp/tensorflow_logs_challenge " \
-      "\nThen open http://127.0.1.1:6006/ into your web browser")
+      "--> tensorboard --logdir=<your path to log file>")

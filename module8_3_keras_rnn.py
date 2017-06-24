@@ -26,7 +26,7 @@ from keras.layers import LSTM
 from keras.datasets import imdb
 
 max_features = 20000
-maxlen = 80  # cut texts after this number of words (among top max_features most common words)
+maxlen = 80  #cut texts after this number of words (among top max_features most common words)
 batch_size = 32
 
 print('Loading data...')
@@ -44,7 +44,7 @@ print('Build model...')
 model = Sequential()
 model.add(Embedding(max_features, 128))
 model.add(SpatialDropout1D(rate=0.2))
-model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))  # try using a GRU instead, for fun
+model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 

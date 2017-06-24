@@ -8,12 +8,10 @@
 # ---------------------------------------
 #
 import tensorflow as tf
-from tensorflow.examples.tutorials.mnist import input_data
 from tflearn.datasets import cifar10
 from tflearn.data_utils import shuffle, to_categorical
 import numpy as np
 
-#model_path = '/home/michal/DataScience/Data Scientist/Udacity/Deep Learning/Assignment1/'
 (X, Y), (X_test, Y_test) = cifar10.load_data()
 X, Y = shuffle(X, Y)
 Y = to_categorical(Y, 10)
@@ -38,7 +36,6 @@ with graph.as_default():
     x = tf.placeholder('float', [None, 32, 32, 3])
     y = tf.placeholder('float', [None, 10])
     keep_prob = tf.placeholder(tf.float32)
-    #x = tf.reshape(x, shape=[-1, 28, 28, 1])
 
     conv1 = tf.nn.relu(tf.nn.conv2d(x, weights['W_conv1'], strides=[1, 1, 1, 1], padding='SAME') + biases['b_conv1'])
     conv1 = tf.nn.max_pool(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')

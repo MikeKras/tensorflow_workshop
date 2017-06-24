@@ -27,9 +27,8 @@ tf.set_random_seed(RANDOM_SEED)
 iris = datasets.load_iris()
 data = iris["data"]
 
-
-features = [[x[0], x[1], x[2]] for x in data]
-target = [x[3] for x in data]
+features = data[:, 0:3]
+target = data[:, 3]
 
 train_X, test_X, train_y, test_y = train_test_split(features, target, test_size=0.33, random_state=RANDOM_SEED)
 
@@ -41,11 +40,11 @@ y = tf.placeholder("float", shape=[None, ])
 w_1 = tf.Variable(tf.random_normal([3, 1], stddev=0.1))
 b = tf.Variable(tf.random_normal([1], stddev=0.1))
 
-# Forward propagation
+#Define operations
 yhat = tf.matmul(X, w_1) + b
 predict = yhat
 
-# Backward propagation
+# Cost and optimizer
 cost = tf.reduce_mean(tf.pow(predict - y, 2))
 RMSE = tf.sqrt(cost)
 updates = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
@@ -58,8 +57,8 @@ with tf.Session() as sess:
         # Train with each example
         for i in range(len(train_X)):
             sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
-            train_accuracy = sess.run(RMSE, feed_dict={X: train_X, y: train_y})
-            test_accuracy = sess.run(RMSE, feed_dict={X: test_X, y: test_y})
+        train_accuracy = sess.run(RMSE, feed_dict={X: train_X, y: train_y})
+        test_accuracy = sess.run(RMSE, feed_dict={X: test_X, y: test_y})
 
         print("Epoch = %d, train MSE = %.2f, test MSE = %.2f"
               % (epoch + 1, train_accuracy, test_accuracy))

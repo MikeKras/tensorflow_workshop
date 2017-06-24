@@ -7,8 +7,8 @@ n_nodes_hl1 = 500
 n_classes = 10
 batch_size = 100
 
-graph = tf.Graph()
-with graph.as_default():
+graph34 = tf.Graph()
+with graph34.as_default():
     x = tf.placeholder('float', [None, 784])
     y = tf.placeholder('float')
     logs_path = '/tmp/tensorflow_logs_challenge/example'
@@ -25,10 +25,10 @@ with graph.as_default():
 
         output = tf.matmul(l1,output_layer['weights']) + output_layer['biases']
     with tf.name_scope('Loss'):
-    # Minimize error using cross entropy
+    # Loss function
         cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=output,labels=y) )
     with tf.name_scope('SGD'):
-    # Gradient Descent    
+    # Optimize
         optimizer = tf.train.AdamOptimizer().minimize(cost)
     
     with tf.name_scope('Accuracy'):
@@ -44,9 +44,9 @@ with graph.as_default():
     merged_summary_op = tf.summary.merge_all()
     
 hm_epochs = 10
-with tf.Session(graph=graph) as sess:
+with tf.Session(graph=graph34) as sess:
     sess.run(tf.global_variables_initializer())
-    summary_writer = tf.summary.FileWriter(logs_path, graph=graph)
+    summary_writer = tf.summary.FileWriter(logs_path, graph=graph34)
     for epoch in range(hm_epochs):
         epoch_loss = 0
         total_batch = int(mnist.train.num_examples/batch_size)
@@ -61,6 +61,5 @@ with tf.Session(graph=graph) as sess:
     print('Accuracy:',accuracy.eval({x:mnist.test.images, y:mnist.test.labels}))
 
 print("Run the command line:\n" \
-      "--> tensorboard --logdir=/tmp/tensorflow_logs_chalenge " \
-      "\nThen open http://127.0.1.1:6006/ into your web browser")
+      "--> tensorboard --logdir=<your path to log file>")
 

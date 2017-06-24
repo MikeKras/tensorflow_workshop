@@ -60,7 +60,6 @@ with tf.Session(graph=graph) as sess:
                                                           keep_prob: 0.7})
             epoch_loss += c
         print('Epoch', epoch + 1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
-
     print('Accuracy:', accuracy.eval({x: X_test, y: y_test, keep_prob: 1}))
 
     # Prepare RNN neural network for the Iris data.

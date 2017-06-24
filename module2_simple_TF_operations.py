@@ -27,15 +27,10 @@ sess = tf.Session()
 # Math Operations
 a = tf.constant(2)
 b = tf.constant(3)
-c = tf.add(a,b)
-c = tf.subtract(a,b)
-c = a*b
-c = tf.div(a,b)
-c = tf.truediv(a, b)
-c = tf.floordiv(a, b)
-c = tf.mod(a, b)
+c = tf.add(a, b)
+c = tf.mod(c, 7)
 print(sess.run(c))
-
+sess.close
 # Math Functions
 print(sess.run(tf.square(2)))
 print(sess.run(tf.sqrt(4.0)))
@@ -97,7 +92,16 @@ print(sess.run(sum,{a:3,b:4}))
 print(sess.run(sum,feed_dict={a:3,b:4}))
 
 # Challenge
+sess =tf.Session()
+x = tf.constant([[1,1]])
+w = tf.constant([[1,2],[3,4]])
+b = tf.constant([[2, 2]])
+y = tf.add(tf.matmul(x,w),b)
+print(sess.run(y))
+sess.close()
 
+# Challenge
+sess =tf.Session()
 a = tf.placeholder(tf.float32,shape=[1,2])
 w = tf.placeholder(tf.float32,shape=[2,2])
 b = tf.constant([[3.,3.]],tf.float32)

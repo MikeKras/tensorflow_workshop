@@ -9,16 +9,10 @@ There are several approaches to fine tuning - this is one of them.
 '''
 #from __future__ import division, print_function, absolute_import
 import tflearn
-from tflearn.data_preprocessing import ImagePreprocessing
-import os
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from keras.utils import np_utils
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.estimator import regression
-from tflearn.datasets import cifar10
-from tflearn.data_utils import shuffle, to_categorical
 from tensorflow.examples.tutorials.mnist.input_data import read_data_sets
 
 mnist = read_data_sets("data", one_hot = True)
@@ -51,7 +45,7 @@ regression = regression(softmax, optimizer='adam',
 model = tflearn.DNN(regression, checkpoint_path='mnist_apply',
                     max_checkpoints=3, tensorboard_verbose=0)
 # Load pre-existing model, restoring all weights, except softmax layer ones
-model.load('./models/mnist_apply_1')
+#model.load('./models/mnist_apply_1')
 
 # Start finetuning
 model.fit(X, Y, n_epoch=1, validation_set=(X_test, Y_test), shuffle=True, 

@@ -21,13 +21,11 @@ train_X, test_X, train_y, test_y = train_test_split(data, all_Y, test_size=0.33,
 
 # Step 4: Model
 
-
 model = Sequential()
-
 
 model.add(Dense(12, input_dim=4, activation='relu'))
 model.add(Dense(8, activation='relu'))
-model.add(Dense(3, activation='sigmoid'))
+model.add(Dense(3, activation='softmax'))
 
 # Step 5: Loss and Optimizer
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])

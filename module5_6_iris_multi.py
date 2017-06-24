@@ -57,7 +57,7 @@ with graph.as_default():
     acc = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
     acc = tf.reduce_mean(tf.cast(acc, tf.float32))
 
-    # Backward propagation
+    # Loss function and optimization
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=output))
     updates = tf.train.GradientDescentOptimizer(0.001).minimize(cost)
 

@@ -37,26 +37,28 @@ l1 = tf.nn.relu(l1)
 
 output = tf.matmul(l1, output_layer['weights']) + output_layer['biases']
 
-#predict = tf.argmax(output, axis=1)
-
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=output))
 updates = tf.train.GradientDescentOptimizer(0.001).minimize(cost)
+
+correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
+accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
 with tf.Session() as sess:
     init = tf.global_variables_initializer()
     sess.run(init)
-    for epoch in range(70):
+    for epoch in range(200):
         # Train with each example
         epoch_loss = 0
         for i in range(int(len(train_X)/batch_size)):
             _, c = sess.run([updates, cost], feed_dict={X: train_X[i*batch_size: (i + 1)*batch_size], y: train_y[i*batch_size: (i + 1)*batch_size]})
             epoch_loss += c
-        # train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
-        #                          sess.run(predict, feed_dict={X: train_X, y: train_y}))
-        # test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
-        #                          sess.run(predict, feed_dict={X: test_X, y: test_y}))
-        correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+
 
         print("Epoch = %d, train accuracy = %.2f%%, test accuracy = %.2f%%"
               % (epoch + 1, 100. * accuracy.eval(feed_dict={X: train_X, y: train_y}), 100. * accuracy.eval(feed_dict={X: test_X, y: test_y})))
+
+#predict = tf.argmax(output, axis=1)
+# train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
+#                          sess.run(predict, feed_dict={X: train_X, y: train_y}))
+# test_accuracy = np.mean(np.argmax(test_y, axis=1) ==
+#                          sess.run(predict, feed_dict={X: test_X, y: test_y}))

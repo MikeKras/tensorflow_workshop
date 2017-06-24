@@ -31,10 +31,11 @@ with graph.as_default():
 
     lstm_cell = rnn.BasicLSTMCell(rnn_size)
     outputs, states = rnn.static_rnn(lstm_cell, inp, dtype=tf.float32)
-
     output = tf.matmul(outputs[-1], layer['weights']) + layer['biases']
+
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=y))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
+
     correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
     accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 

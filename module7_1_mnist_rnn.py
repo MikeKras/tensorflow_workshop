@@ -22,12 +22,18 @@ with graph.as_default():
 
     layer = {'weights': tf.Variable(tf.random_normal([rnn_size, n_classes])),
              'biases': tf.Variable(tf.random_normal([n_classes]))}
+
     inp = tf.unstack(x, axis=1)
+
     lstm_cell = rnn.BasicLSTMCell(rnn_size)
     outputs, states = rnn.static_rnn(lstm_cell, inp, dtype=tf.float32)
     output = tf.matmul(outputs[-1], layer['weights']) + layer['biases']
+
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=y))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
+
+    correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
+    accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 
 with tf.Session(graph=graph) as sess:
     sess.run(tf.global_variables_initializer())
@@ -41,9 +47,7 @@ with tf.Session(graph=graph) as sess:
             epoch_loss += c
         print('Epoch', epoch + 1, 'completed out of', hm_epochs, 'loss:', epoch_loss)
 
-    correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
 
-    accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
     print('Accuracy:', accuracy.eval({x: mnist.test.images.reshape((-1, n_chunks, chunk_size)), y: mnist.test.labels}))
 
     # Prepare RNN neural network for the Iris data.
