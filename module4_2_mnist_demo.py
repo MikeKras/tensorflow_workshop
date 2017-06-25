@@ -26,7 +26,7 @@ train = optimizer.minimize(loss)
 correct_prediction = tf.equal(tf.argmax(yhat, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-saver = tf.train.Saver()
+
 with tf.Session() as sess:
     init = tf.global_variables_initializer()
     sess.run(init)
@@ -39,9 +39,17 @@ with tf.Session() as sess:
     # Step 5: Prediction
     print(sess.run(accuracy, feed_dict={x: mnist.test.images,
                                         y: mnist.test.labels}))
-    saver.save(sess, '/tmp/simple_model/model.ckpt')
 
-with tf.Session() as sess:
-    saver.restore(sess, '/tmp/simple_model/model.ckpt')
-    print(sess.run(accuracy, feed_dict={x: mnist.test.images,
-                                        y: mnist.test.labels}))
+
+
+
+
+
+
+# saver = tf.train.Saver()
+#     saver.save(sess, '/tmp/simple_model/model.ckpt')
+#
+# with tf.Session() as sess:
+#     saver.restore(sess, '/tmp/simple_model/model.ckpt')
+#     print(sess.run(accuracy, feed_dict={x: mnist.test.images,
+#                                         y: mnist.test.labels}))
