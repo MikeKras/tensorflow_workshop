@@ -1,14 +1,14 @@
 # Module 4: Simple TF Model
-# Simple TF model on MINST dataset
+# Use softmax cross-entropy function on MINST dataset
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
-# Parameters
-learning_rate = 0.001
-batch_size = 100
-
 import tensorflow as tf
+
+# Parameters
+learning_rate = 0.5
+batch_size = 100
 
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("mnist", one_hot=True)
@@ -19,11 +19,12 @@ W = tf.Variable(tf.zeros([784, 10]))
 b = tf.Variable(tf.zeros([10]))
 
 # Step 2: Setup Model
-yhat = tf.nn.softmax(tf.matmul(X,W)+b)
+yhat = tf.matmul(X, W) + b
 y = tf.placeholder(tf.float32, [None, 10]) # placeholder for correct answers
 
 # Step 3: Loss Functions
-loss = -tf.reduce_sum(y*tf.log(yhat))
+loss = tf.reduce_mean(
+   tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
 
 # Step 4: Optimizer
 optimizer = tf.train.GradientDescentOptimizer(learning_rate)
@@ -44,6 +45,6 @@ for i in range(1000):
     sess.run(train, feed_dict=train_data)
     print("Training Accuracy = ",sess.run(accuracy,feed_dict = train_data))
 
-# Step 6: Evaluation
+# Step 5: Prediction
 test_data = {X:mnist.test.images,y:mnist.test.labels}
 print("Testing Accuracy = ", sess.run(accuracy, feed_dict = test_data))

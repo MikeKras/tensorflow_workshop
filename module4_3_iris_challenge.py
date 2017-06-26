@@ -1,56 +1,60 @@
-# Iris Flower Dataset - Classification
+# Module 4: Simple TF Models
+# Challenge: Iris flower dataset
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+
+# Parameters
+learning_rate = 0.001
+training_epochs = 150
 
 import tensorflow as tf
 import numpy as np
 from sklearn import datasets
 
 iris = datasets.load_iris()
-data = iris.data
+X = iris.data
 target = iris.target
 
 # Convert the label into one-hot vector
 num_labels = len(np.unique(target))
-all_Y = np.eye(num_labels)[target]  # One liner trick!
+Y = np.eye(num_labels)[target]
 
 # Split the data into training and testing sets
 from sklearn.model_selection import train_test_split
+train_X, test_X, train_Y, test_Y = train_test_split(X, Y, test_size=0.33, random_state=42)
 
-train_X, test_X, train_Y, test_Y = train_test_split(data, all_Y, test_size=0.33, random_state=42)
+# Step 1: Initial Setup
+X = tf.placeholder(tf.float32, [None, 4])
+W = tf.Variable(tf.zeros([4, 3]))
+b = tf.Variable(tf.zeros([3]))
 
-# Step 1: Define the Model/Graph
-X_size = train_X.shape[1]  # Number of input nodes: 4 features and 1 bias
-Y_size = train_Y.shape[1]  # Number of outcomes (3 iris flowers)
+# Step 2: Define Model
+yhat = tf.matmul(X, W) + b
+y = tf.placeholder(tf.float32, [None, 3]) # Placeholder for correct answer
 
-x = tf.placeholder("float", shape=[None, X_size])
-y = tf.placeholder("float", shape=[None, Y_size])
-
-W = tf.Variable(tf.random_normal([X_size, Y_size], stddev=0.1))
-b = tf.Variable(tf.random_normal([Y_size], stddev=0.1))
-yhat = tf.matmul(x, W) + b
-
-# Step 2: Define Loss
+# Step 3: Loss Function
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
 
-# Step 3: Optimizer
-optimizer = tf.train.GradientDescentOptimizer(0.001)
+# Step 4: Optimizer
+optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 train = optimizer.minimize(loss)
 
 correct_prediction = tf.equal(tf.argmax(yhat, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-sess = tf.Session()
 init = tf.global_variables_initializer()
+sess = tf.Session()
 sess.run(init)
 
-# Step 4: Training Loop
-for epoch in range(150):
+# Step 5: Training Loop
+for epoch in range(training_epochs):
     for i in range(len(train_X)):
-        sess.run(train, feed_dict={x: train_X[i: i + 1], y: train_Y[i: i + 1]})
+        training_data = {X: train_X[i: i + 1], y: train_Y[i: i + 1]}
+        sess.run(train, feed_dict = training_data)
 
-print(sess.run(accuracy, feed_dict={x: test_X, y: test_Y}))
+# Step 6: Evaluation
+testing_data = {X: test_X, y: test_Y}
+print("Training Accuracy = ", sess.run(accuracy, feed_dict = testing_data))
 
-# Step 5: Prediction
-X = tf.constant([[1., 1., 1., 1.]])
-predict = tf.argmax(tf.matmul(X, W), axis=1)
-print(sess.run(predict))
-sess.close()
+
